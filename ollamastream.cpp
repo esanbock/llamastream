@@ -43,8 +43,6 @@ ollamastream& ollamastream::operator<<(const std::string& prompt)
     // Disable separate 'thinking' output so the response field contains the model text
     payload["think"] = false;
 
-    // Provide a default max_tokens option to control response length (can be adjusted by caller in a future change)
-    payload["options"] = { {"max_tokens", 4096} };
 
     std::string payload_str = payload.dump();
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, payload_str.c_str());
