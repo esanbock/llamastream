@@ -9,6 +9,9 @@ private:
     const llama_vocab* vocab;
     llama_sampler* sampler;
     std::string response_buffer;
+    // store model identifier (path or model name) for remote API use
+    std::string model_name;
+    int context_params;
 
 public:
     llamastream(const std::string& model_path, int context_params);
