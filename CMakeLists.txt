@@ -11,6 +11,7 @@ include_directories(.)
 add_library(llamastream STATIC
         ollamastream.cpp
         ollamastream.h
+        llamastream.cpp
         llamastream.h)
 
 target_link_libraries(llamastream PRIVATE nlohmann_json::nlohmann_json CURL::libcurl)
