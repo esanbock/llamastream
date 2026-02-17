@@ -60,40 +60,40 @@ ollamastream& ollamastream::operator<<(const std::string& prompt)
 
     CURLcode res = curl_easy_perform(curl);
     
-    std::cout << "DEBUG: CURL result: " << res << std::endl;
-    std::cout << "DEBUG: Raw response: " << response_string.substr(0, 500) << std::endl;
+    std::cerr << "DEBUG: CURL result: " << res << std::endl;
+    std::cerr << "DEBUG: Raw response: " << response_string.substr(0, 500) << std::endl;
     
     if (res != CURLE_OK) {
-        std::cout << "DEBUG: CURL error: " << curl_easy_strerror(res) << std::endl;
+        std::cerr << "DEBUG: CURL error: " << curl_easy_strerror(res) << std::endl;
         response_buffer.clear();
     } else {
         try {
             auto parsed = json::parse(response_string);
-            std::cout << "DEBUG: Parsed JSON successfully" << std::endl;
+            std::cerr << "DEBUG: Parsed JSON successfully" << std::endl;
             
             // Try several common fields that might contain the generated text
             if (parsed.contains("response")) {
                 response_buffer = parsed["response"].get<std::string>();
-                std::cout << "DEBUG: Found 'response' field" << std::endl;
+                std::cerr << "DEBUG: Found 'response' field" << std::endl;
             } else if (parsed.contains("text")) {
                 response_buffer = parsed["text"].get<std::string>();
-                std::cout << "DEBUG: Found 'text' field" << std::endl;
+                std::cerr << "DEBUG: Found 'text' field" << std::endl;
             } else if (parsed.contains("results") && parsed["results"].is_array() && !parsed["results"].empty()) {
                 auto &first = parsed["results"][0];
                 if (first.contains("text")) response_buffer = first["text"].get<std::string>();
                 else response_buffer = response_string;
-                std::cout << "DEBUG: Found 'results' array" << std::endl;
+                std::cerr << "DEBUG: Found 'results' array" << std::endl;
             } else if (parsed.contains("output") && parsed["output"].is_string()) {
                 response_buffer = parsed["output"].get<std::string>();
-                std::cout << "DEBUG: Found 'output' field" << std::endl;
+                std::cerr << "DEBUG: Found 'output' field" << std::endl;
             } else {
-                std::cout << "DEBUG: No known field found, using raw response" << std::endl;
+                std::cerr << "DEBUG: No known field found, using raw response" << std::endl;
                 response_buffer = response_string;
             }
             
-            std::cout << "DEBUG: Response buffer length: " << response_buffer.length() << std::endl;
+            std::cerr << "DEBUG: Response buffer length: " << response_buffer.length() << std::endl;
         } catch (const std::exception& e) {
-            std::cout << "DEBUG: JSON parse error: " << e.what() << std::endl;
+            std::cerr << "DEBUG: JSON parse error: " << e.what() << std::endl;
             response_buffer = response_string;
         }
     }
