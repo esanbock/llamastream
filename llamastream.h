@@ -1,8 +1,10 @@
 #pragma once
 #include <string>
+#include "llmstream.h"
 #include "llama.h"
 
-class llamastream {
+class llamastream : public llmstream
+{
 private:
     llama_model* model;
     llama_context* ctx;
@@ -17,8 +19,8 @@ public:
     llamastream(const std::string& model_path, int context_params);
     ~llamastream();
     
-    llamastream& operator<<(const std::string& prompt);
-    llamastream& operator>>(std::string& response);
+    llamastream& operator<<(const std::string& prompt) override;
+    llamastream& operator>>(std::string& response) override;
     void restart();
 
 };

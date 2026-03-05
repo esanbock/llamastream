@@ -1,6 +1,6 @@
 // llamastream.cpp : Defines the functions for the static library.
 //
-
+#include "llmstream.h"
 #include "llamastream.h"
 #include <vector>
 #include <stdexcept>

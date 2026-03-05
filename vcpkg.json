@@ -1,0 +1,10 @@
+{
+  "dependencies": [
+    "curl",
+    "nlohmann-json",
+    {
+      "name": "aws-sdk-cpp",
+      "features": ["bedrock-runtime"]
+    }
+  ]
+}

@@ -1,1 +1,4 @@
 /x64
+/vcpkg_installed
+/llamastream/x64
+/.vs

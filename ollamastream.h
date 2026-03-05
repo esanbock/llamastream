@@ -1,8 +1,10 @@
 #pragma once
 
 #include <string>
+#include "llmstream.h"
 
-class ollamastream {
+class ollamastream : public llmstream
+{
 private:
     std::string response_buffer;
     std::string model_name;
@@ -13,7 +15,7 @@ public:
     ollamastream(const std::string& model_name, const std::string& server_host = "localhost");
     ~ollamastream();
 
-    ollamastream& operator<<(const std::string& prompt);
-    ollamastream& operator>>(std::string& response);
+    ollamastream& operator<<(const std::string& prompt) override;
+    ollamastream& operator>>(std::string& response) override;
     void restart();
 };
