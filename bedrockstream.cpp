@@ -17,12 +17,18 @@
 using namespace Aws::BedrockRuntime;
 using namespace Aws::BedrockRuntime::Model;
 
-bedrockstream::bedrockstream(const std::string& model_id, const std::string& region)
-    : response_buffer(), model_id(model_id), temperature(0.3), top_p(0.9), max_tokens(2048)
+bedrockstream::bedrockstream(const std::string& model_id, const std::string& region,
+    double temperature, int max_tokens, double top_p)
+    : response_buffer(), model_id(model_id)
 {
     Aws::Client::ClientConfiguration config;
     config.region = region;
     client = std::make_unique<BedrockRuntimeClient>(config);
+
+    inference_config = std::make_unique<InferenceConfiguration>();
+    inference_config->SetMaxTokens(max_tokens);
+    inference_config->SetTemperature(temperature);
+    inference_config->SetTopP(top_p);
 }
 
 bedrockstream::~bedrockstream()
@@ -33,7 +39,6 @@ bedrockstream& bedrockstream::operator<<(const std::string& prompt)
 {
     try
     {
-        // Build message with user role
         ContentBlock content;
         content.SetText(prompt);
 
@@ -41,17 +46,10 @@ bedrockstream& bedrockstream::operator<<(const std::string& prompt)
         message.SetRole(ConversationRole::user);
         message.AddContent(std::move(content));
 
-        // Configure inference parameters
-        InferenceConfiguration inference_config;
-        inference_config.SetMaxTokens(max_tokens);
-        inference_config.SetTemperature(temperature);
-        inference_config.SetTopP(top_p);
-
-        // Build request — same format for all models
         ConverseRequest request;
         request.SetModelId(model_id);
         request.AddMessages(std::move(message));
-        request.SetInferenceConfig(std::move(inference_config));
+        request.SetInferenceConfig(*inference_config);
 
         auto outcome = client->Converse(request);
 
