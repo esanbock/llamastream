@@ -1,14 +1,21 @@
 #pragma once
 
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+
 #include <string>
+#include <memory>
 #include "llmstream.h"
+
+namespace Aws { namespace BedrockRuntime { class BedrockRuntimeClient; } }
 
 class bedrockstream : public llmstream
 {
 private:
     std::string response_buffer;
     std::string model_id;
-    std::string region;
+    std::unique_ptr<Aws::BedrockRuntime::BedrockRuntimeClient> client;
     double temperature;
     double top_p;
     int max_tokens;
