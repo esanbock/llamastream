@@ -24,6 +24,24 @@
     <ClInclude Include="ollamastream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="bedrockstream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bedrockstreambuf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="llamastreambuf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="llmstreambuf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ollamastreambuf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="llmstream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="llamastream.cpp">
@@ -32,5 +50,20 @@
     <ClCompile Include="ollamastream.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="bedrockstream.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bedrockstreambuf.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="llamastreambuf.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ollamastreambuf.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="vcpkg.json" />
   </ItemGroup>
 </Project>
