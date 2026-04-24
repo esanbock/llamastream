@@ -32,6 +32,8 @@ ollamastream& ollamastream::operator<<(const std::string& prompt)
     std::string url = "http://" + server_host + ":11434/api/generate";
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_POST, 1L);
+    curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 30L);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 300L);
 
     // Construct payload according to Ollama's API: model (optional), prompt, stream, options
     json payload = json::object();
