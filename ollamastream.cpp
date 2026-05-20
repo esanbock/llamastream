@@ -49,7 +49,7 @@ ollamastream& ollamastream::operator<<(const std::string& prompt)
     options["top_p"] = 0.9;
     payload["options"] = options;
 
-    std::string payload_str = payload.dump();
+    std::string payload_str = payload.dump(-1, ' ', false, nlohmann::json::error_handler_t::replace);
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, payload_str.c_str());
     curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE_LARGE, (curl_off_t)payload_str.size());
 
