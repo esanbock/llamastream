@@ -40,7 +40,24 @@ llamastream& llamastream::operator<<(const std::string& prompt)
 	llama_sampler_chain_add(sampler, llama_sampler_init_greedy());
 
 
-	std::string formatted = "<|start_header_id|>user<|end_header_id|>\n\n" + prompt + "<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n";
+	std::string formatted;
+	const char* tmpl = llama_model_chat_template(model, nullptr);
+	if (tmpl)
+	{
+		llama_chat_msg msgs[] = {{"user", prompt.c_str()}};
+		std::vector<char> buf(prompt.size() + 512);
+		int len = llama_chat_apply_template(tmpl, msgs, 1, true, buf.data(), buf.size());
+		if (len > (int)buf.size())
+		{
+			buf.resize(len + 1);
+			len = llama_chat_apply_template(tmpl, msgs, 1, true, buf.data(), buf.size());
+		}
+		formatted = std::string(buf.data(), len);
+	}
+	else
+	{
+		formatted = prompt;
+	}
 
 	std::vector<llama_token> tokens(formatted.size() + 1);
 	int n_tokens = llama_tokenize(vocab, formatted.c_str(), formatted.size(), tokens.data(), tokens.size(), true, true);
@@ -99,7 +116,7 @@ void llamastream::restart()
 	llama_free(ctx);
 
 	llama_context_params ctx_params = llama_context_default_params();
-	ctx_params.n_ctx = 1024;  // Reduced from 2048 to prevent memory issues
+	ctx_params.n_ctx = context_params;
 	ctx = llama_init_from_model(model, ctx_params);
 	if (!ctx) throw std::runtime_error("Failed to recreate context");
 

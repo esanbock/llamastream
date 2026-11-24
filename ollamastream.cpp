@@ -12,8 +12,10 @@ static size_t curl_write_cb(void* contents, size_t size, size_t nmemb, void* use
     return size * nmemb;
 }
 
-ollamastream::ollamastream(const std::string& model_name, const std::string& server_host)
-    : response_buffer(), model_name(model_name), server_host(server_host)
+ollamastream::ollamastream(const std::string& model_name, const std::string& server_host,
+                           double temperature, double top_p)
+    : response_buffer(), model_name(model_name), server_host(server_host),
+      temperature(temperature), top_p(top_p)
 {
 }
 
@@ -24,7 +26,8 @@ ollamastream::~ollamastream()
 ollamastream& ollamastream::operator<<(const std::string& prompt)
 {
     CURL* curl = curl_easy_init();
-    if (!curl) {
+    if (!curl)
+    {
         response_buffer.clear();
         return *this;
     }
@@ -35,18 +38,14 @@ ollamastream& ollamastream::operator<<(const std::string& prompt)
     curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 30L);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 300L);
 
-    // Construct payload according to Ollama's API: model (optional), prompt, stream, options
     json payload = json::object();
     if (!model_name.empty()) payload["model"] = model_name;
     payload["prompt"] = prompt;
-
-    // Explicitly request non-streaming output so we receive a single JSON response
     payload["stream"] = false;
 
-    // Add options to control model behavior
     json options = json::object();
-    options["temperature"] = 0.3;  // Lower temperature for more focused responses
-    options["top_p"] = 0.9;
+    options["temperature"] = temperature;
+    options["top_p"] = top_p;
     payload["options"] = options;
 
     std::string payload_str = payload.dump(-1, ' ', false, nlohmann::json::error_handler_t::replace);
@@ -62,41 +61,47 @@ ollamastream& ollamastream::operator<<(const std::string& prompt)
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_string);
 
     CURLcode res = curl_easy_perform(curl);
-    
-    std::cerr << "DEBUG: CURL result: " << res << std::endl;
-    std::cerr << "DEBUG: Raw response: " << response_string.substr(0, 500) << std::endl;
-    
-    if (res != CURLE_OK) {
-        std::cerr << "DEBUG: CURL error: " << curl_easy_strerror(res) << std::endl;
+
+    if (res != CURLE_OK)
+    {
+        std::cerr << "Ollama API error: " << curl_easy_strerror(res) << std::endl;
         response_buffer.clear();
-    } else {
-        try {
+    }
+    else
+    {
+        try
+        {
             auto parsed = json::parse(response_string);
-            std::cerr << "DEBUG: Parsed JSON successfully" << std::endl;
-            
-            // Try several common fields that might contain the generated text
-            if (parsed.contains("response")) {
+
+            if (parsed.contains("response"))
+            {
                 response_buffer = parsed["response"].get<std::string>();
-                std::cerr << "DEBUG: Found 'response' field" << std::endl;
-            } else if (parsed.contains("text")) {
+            }
+            else if (parsed.contains("text"))
+            {
                 response_buffer = parsed["text"].get<std::string>();
-                std::cerr << "DEBUG: Found 'text' field" << std::endl;
-            } else if (parsed.contains("results") && parsed["results"].is_array() && !parsed["results"].empty()) {
+            }
+            else if (parsed.contains("results") && parsed["results"].is_array() && !parsed["results"].empty())
+            {
                 auto &first = parsed["results"][0];
-                if (first.contains("text")) response_buffer = first["text"].get<std::string>();
-                else response_buffer = response_string;
-                std::cerr << "DEBUG: Found 'results' array" << std::endl;
-            } else if (parsed.contains("output") && parsed["output"].is_string()) {
+                if (first.contains("text"))
+                    response_buffer = first["text"].get<std::string>();
+                else
+                    response_buffer = response_string;
+            }
+            else if (parsed.contains("output") && parsed["output"].is_string())
+            {
                 response_buffer = parsed["output"].get<std::string>();
-                std::cerr << "DEBUG: Found 'output' field" << std::endl;
-            } else {
-                std::cerr << "DEBUG: No known field found, using raw response" << std::endl;
+            }
+            else
+            {
+                std::cerr << "Ollama API: unexpected response format" << std::endl;
                 response_buffer = response_string;
             }
-            
-            std::cerr << "DEBUG: Response buffer length: " << response_buffer.length() << std::endl;
-        } catch (const std::exception& e) {
-            std::cerr << "DEBUG: JSON parse error: " << e.what() << std::endl;
+        }
+        catch (const std::exception& e)
+        {
+            std::cerr << "Ollama API JSON parse error: " << e.what() << std::endl;
             response_buffer = response_string;
         }
     }
