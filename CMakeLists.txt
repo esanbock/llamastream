@@ -27,16 +27,6 @@ else()
     message(STATUS "AWS SDK not found, building without Bedrock support")
 endif()
 
-# Add llama.cpp support if available
-find_path(LLAMA_INCLUDE_DIR llama.h)
-
-if(LLAMA_INCLUDE_DIR)
-    message(STATUS "llama.cpp found, building with llamastream support")
-    list(APPEND LLAMASTREAM_SOURCES
-        llamastream.cpp
-        llamastream.h)
-endif()
-
 add_library(llamastream STATIC ${LLAMASTREAM_SOURCES})
 
 target_link_libraries(llamastream PRIVATE nlohmann_json::nlohmann_json CURL::libcurl)

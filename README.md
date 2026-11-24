@@ -20,8 +20,6 @@ claude >> response;
 | `claudestream` | [Anthropic Claude API](https://docs.anthropic.com/en/api/messages) | Claude (all models) |
 | `bedrockstream` | [AWS Bedrock](https://aws.amazon.com/bedrock/) | Any Bedrock-supported model |
 | `ollamastream` | [Ollama](https://ollama.ai/) | Any locally-hosted model |
-| `llamastream` | [llama.cpp](https://github.com/ggerganov/llama.cpp) | Local GGUF models |
-
 All providers implement the same `llmstream` base class, so you can swap backends without changing application code:
 
 ```cpp
@@ -56,9 +54,9 @@ make
 ### Dependencies
 
 - **Required:** libcurl, [nlohmann/json](https://github.com/nlohmann/json)
-- **Optional:** AWS SDK for C++ (enables `bedrockstream`), llama.cpp (enables `llamastream`)
+- **Optional:** AWS SDK for C++ (enables `bedrockstream`)
 
-CMake automatically detects which optional backends are available and builds support for them.
+CMake automatically detects whether the AWS SDK is available and builds Bedrock support if found.
 
 ## Provider Setup
 
@@ -86,10 +84,6 @@ bedrockstream bedrock("us.anthropic.claude-sonnet-4-20250514-v1:0", "us-east-1",
 ```
 
 Requires AWS credentials configured via environment variables or `~/.aws/credentials`.
-
-### llama.cpp (local GGUF models)
-
-Requires llama.cpp headers at build time. See llama.cpp documentation for model setup.
 
 ## Design
 
