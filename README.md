@@ -29,7 +29,8 @@ All providers implement the same `llmstream` base class, so you can swap backend
 #include "ollamastream.h"
 #include "claudestream.h"
 
-void ask(llmstream& llm, const std::string& question) {
+void ask(llmstream& llm, const std::string& question)
+{
     std::string answer;
     llm << question;
     llm >> answer;
@@ -95,7 +96,8 @@ Requires llama.cpp headers at build time. See llama.cpp documentation for model 
 `llmstream` is a pure virtual base class with two operators:
 
 ```cpp
-class llmstream {
+class llmstream
+{
 public:
     virtual llmstream& operator<<(const std::string& prompt) = 0;
     virtual llmstream& operator>>(std::string& response) = 0;
