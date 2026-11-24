@@ -13,6 +13,8 @@ include_directories(.)
 set(LLAMASTREAM_SOURCES
     ollamastream.cpp
     ollamastream.h
+    claudestream.cpp
+    claudestream.h
     llmstream.h)
 
 # Add Bedrock support if AWS SDK is available
