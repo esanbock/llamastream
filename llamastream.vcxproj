@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="bedrockstream.h" />
+    <ClInclude Include="claudestream.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="llamastream.h" />
     <ClInclude Include="llmstream.h" />
@@ -151,7 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bedrockstream.cpp" />
-    <ClCompile Include="llamastream.cpp" />
+    <ClCompile Include="claudestream.cpp" />
     <ClCompile Include="ollamastream.cpp" />
   </ItemGroup>
   <ItemGroup>

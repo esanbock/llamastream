@@ -15,6 +15,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="claudestream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="framework.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -44,7 +47,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="llamastream.cpp">
+    <ClCompile Include="claudestream.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ollamastream.cpp">
